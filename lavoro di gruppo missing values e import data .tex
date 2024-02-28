@@ -1,0 +1,2239 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+
+
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{lavoro di gruppo missing values e import data }
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb.
+    \makeatletter
+        \newbox\Wrappedcontinuationbox
+        \newbox\Wrappedvisiblespacebox
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}}
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}}
+        \newcommand*\Wrappedcontinuationindent {3ex }
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox}
+        % Take advantage of the already applied Pygments mark-up to insert
+        % potential linebreaks for TeX processing.
+        %        {, <, #, %, $, ' and ": go to next line.
+        %        _, }, ^, &, >, - and ~: stay at end of broken line.
+        % Use of \textquotesingle for straight quote.
+        \newcommand*\Wrappedbreaksatspecials {%
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}%
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}%
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}%
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}%
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}%
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}%
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}%
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}%
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}%
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}%
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}%
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}%
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}%
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}%
+        }
+        % Some characters . , ; ? ! / are not pygmentized.
+        % This macro makes them "active" and they will insert potential linebreaks
+        \newcommand*\Wrappedbreaksatpunct {%
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}%
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}%
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}%
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}%
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}%
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}%
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}%
+            \catcode`\.\active
+            \catcode`\,\active
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active
+            \lccode`\~`\~
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \section{MISSING VALUES \& IMPORT
+DATA}\label{missing-values-import-data}
+
+    \subsection{CREATO DA GRANIERI JOELE, TASSONE LEONARDO, RAPHAEL RODRIGO
+E RADISHA
+WARNAKULASURIYA}\label{creato-da-granieri-joele-tassone-leonardo-raphael-rodrigo-e-radisha-warnakulasuriya}
+
+    \subsection{MISSING VALUES}\label{missing-values}
+
+    \subsubsection{Generazione e Visualizzazione di Dati Casuali con Pandas
+e
+NumPy}\label{generazione-e-visualizzazione-di-dati-casuali-con-pandas-e-numpy}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
+\PY{k+kn}{import} \PY{n+nn}{plotly}\PY{n+nn}{.}\PY{n+nn}{express} \PY{k}{as} \PY{n+nn}{px}
+
+\PY{c+c1}{\PYZsh{} Genera dati casuali per l\PYZsq{}esplorazione}
+\PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{seed}\PY{p}{(}\PY{l+m+mi}{42}\PY{p}{)}
+\PY{n}{data} \PY{o}{=} \PY{p}{\PYZob{}}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Età}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{randint}\PY{p}{(}\PY{l+m+mi}{18}\PY{p}{,} \PY{l+m+mi}{70}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{l+m+mi}{1000}\PY{p}{)}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Genere}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{choice}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Maschio}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Femmina}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{l+m+mi}{1000}\PY{p}{)}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Punteggio}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{uniform}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{100}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{l+m+mi}{1000}\PY{p}{)}\PY{p}{,}
+     \PY{c+c1}{\PYZsh{}random normal esce il numero con la media più alta, invece quella più bassa ha poca possibilità di uscire}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Reddito}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{normal}\PY{p}{(}\PY{l+m+mi}{50000}\PY{p}{,} \PY{l+m+mi}{15000}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{l+m+mi}{1000}\PY{p}{)}
+\PY{p}{\PYZcb{}}
+
+\PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{data}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Visualizza le prime righe del dataset}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{df}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+   Età   Genere  Punteggio       Reddito
+0   56  Maschio  85.120691  52915.764524
+1   69  Maschio  49.514653  44702.505608
+2   46  Maschio  48.058658  55077.257652
+3   32  Femmina  59.240778  45568.978848
+4   60  Maschio  82.468097  52526.914644
+    \end{Verbatim}
+
+    \begin{quote}
+Il codice genera un DataFrame di pandas chiamato df con 1000 righe di
+dati casuali. Questi dati includono:
+
+`Età': un array di 1000 numeri interi casuali tra 18 e 70.
+
+`Genere': un array di 1000 scelte casuali tra `Maschio' e `Femmina'.
+
+`Punteggio': un array di 1000 numeri float casuali tra 0 e 100.
+
+`Reddito': un array di 1000 numeri generati da una distribuzione normale
+con media 50000 e deviazione standard 15000.
+\end{quote}
+
+\begin{quote}
+La linea print(df.head()) stampa le prime 5 righe del DataFrame df.
+Questo è utile per avere un'anteprima dei dati senza dover stampare
+l'intero DataFrame.
+\end{quote}
+
+    \subsubsection{Creazione e Anteprima di un DataFrame Pandas con Dati
+Casuali}\label{creazione-e-anteprima-di-un-dataframe-pandas-con-dati-casuali}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+
+\PY{c+c1}{\PYZsh{} Dataset con dati mancanti rappresentati da None o NaN}
+\PY{n}{dataset} \PY{o}{=} \PY{p}{[}
+    \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{età}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{25}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{punteggio}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{90}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ammesso}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{1}\PY{p}{\PYZcb{}}\PY{p}{,}
+    \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{età}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{k+kc}{None}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{punteggio}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{85}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ammesso}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{0}\PY{p}{\PYZcb{}}\PY{p}{,}
+    \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{età}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{28}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{punteggio}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{k+kc}{None}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ammesso}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{1}\PY{p}{\PYZcb{}}\PY{p}{,}
+    \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{età}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{k+kc}{None}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{punteggio}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{75}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ammesso}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{1}\PY{p}{\PYZcb{}}\PY{p}{,}
+    \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{età}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{23}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{punteggio}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{k+kc}{None}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ammesso}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{k+kc}{None}\PY{p}{\PYZcb{}}\PY{p}{,}
+    \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{età}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{23}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{punteggio}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{77}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ammesso}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{k+kc}{None}\PY{p}{\PYZcb{}}\PY{p}{,}
+\PY{p}{]}
+\PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{dataset}\PY{p}{)}
+\PY{n}{df}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+    età  punteggio  ammesso
+0  25.0       90.0      1.0
+1   NaN       85.0      0.0
+2  28.0        NaN      1.0
+3   NaN       75.0      1.0
+4  23.0        NaN      NaN
+5  23.0       77.0      NaN
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{quote}
+Il codice crea un DataFrame di pandas chiamato df da un elenco di
+dizionari. Ogni dizionario rappresenta un record con campi `età',
+`punteggio' e `ammesso'. Alcuni dei valori in questi campi sono None,
+che pandas interpreta come valori mancanti o NaN (Not a Number).
+\end{quote}
+
+    \subsubsection{Accesso e Manipolazione di Dati in un DataFrame
+Pandas}\label{accesso-e-manipolazione-di-dati-in-un-dataframe-pandas}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{età}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+0    25.0
+1     NaN
+2    28.0
+3     NaN
+4    23.0
+5    23.0
+Name: età, dtype: float64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{quote}
+L'espressione df{[}``età''{]} seleziona la colonna ``età'' dal DataFrame
+df. Questo restituirà una serie di pandas che contiene tutti i valori
+della colonna ``età''. Se ci sono valori mancanti in questa colonna,
+verranno rappresentati come NaN (Not a Number)
+\end{quote}
+
+    \subsubsection{Identificazione di Valori Mancanti in un DataFrame
+Pandas}\label{identificazione-di-valori-mancanti-in-un-dataframe-pandas}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+
+\PY{c+c1}{\PYZsh{} Genera dati di esempio}
+\PY{n}{data} \PY{o}{=} \PY{p}{\PYZob{}}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Feature1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{nan}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Feature2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{nan}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{nan}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Feature3}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{nan}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{]}
+\PY{p}{\PYZcb{}}
+
+\PY{c+c1}{\PYZsh{} Crea un DataFrame}
+\PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{data}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Calcola la matrice di missing values}
+\PY{n}{missing\PYZus{}matrix} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}
+\PY{n}{missing\PYZus{}matrix}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+   Feature1  Feature2  Feature3
+0     False      True     False
+1     False     False      True
+2      True     False     False
+3     False     False     False
+4     False      True     False
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{quote}
+Il comando missing\_matrix = df.isnull() crea una nuova variabile
+chiamata missing\_matrix che è un DataFrame di stesse dimensioni di df.
+In missing\_matrix, ogni elemento è un valore booleano che indica se
+l'elemento corrispondente in df è un valore mancante (True) o no
+(False). In questo DataFrame, True indica un valore mancante e False
+indica un valore non mancante.
+\end{quote}
+
+    \subsubsection{Selezione di Righe con Valori Mancanti in un DataFrame
+Pandas}\label{selezione-di-righe-con-valori-mancanti-in-un-dataframe-pandas}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{righe\PYZus{}con\PYZus{}dati\PYZus{}mancanti} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{n}{df}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{any}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{]}
+\PY{n}{righe\PYZus{}con\PYZus{}dati\PYZus{}mancanti}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+   Feature1  Feature2  Feature3
+0       1.0       NaN       1.0
+1       2.0       2.0       NaN
+2       NaN       3.0       3.0
+4       5.0       NaN       5.0
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{quote}
+Il codice seleziona tutte le righe del DataFrame df che contengono
+almeno un valore mancante (NaN o None) e le assegna alla variabile
+righe\_con\_dati\_mancanti.
+
+Il comando df.isnull().any(axis=1) restituisce una serie booleana che
+indica se ciascuna riga ha almeno un valore mancante. Quindi,
+df{[}df.isnull().any(axis=1){]} seleziona solo le righe di df per le
+quali il valore corrispondente nella serie booleana è True.
+\end{quote}
+
+    \subsubsection{Calcolo del Numero Totale di Righe con Dati Mancanti in
+un DataFrame
+Pandas}\label{calcolo-del-numero-totale-di-righe-con-dati-mancanti-in-un-dataframe-pandas}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{totale\PYZus{}dati\PYZus{}mancanti} \PY{o}{=} \PY{n}{righe\PYZus{}con\PYZus{}dati\PYZus{}mancanti}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+\PY{n}{totale\PYZus{}dati\PYZus{}mancanti}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+4
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{quote}
+Il codice calcola il numero totale di righe con dati mancanti nel
+DataFrame df e lo assegna alla variabile totale\_dati\_mancanti.
+
+La funzione shape{[}0{]} restituisce il numero di righe in un DataFrame.
+Quindi, righe\_con\_dati\_mancanti.shape{[}0{]} restituisce il numero di
+righe nel DataFrame righe\_con\_dati\_mancanti, che contiene solo le
+righe di df con almeno un valore mancante.
+
+Il valore di totale\_dati\_mancanti sarà quindi il numero totale di
+righe con almeno un valore mancante nel DataFrame originale df.
+\end{quote}
+
+    \subsubsection{Calcolo e Stampa di Dati Mancanti nel
+Dataset}\label{calcolo-e-stampa-di-dati-mancanti-nel-dataset}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{righe con dati mancanti:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{righe\PYZus{}con\PYZus{}dati\PYZus{}mancanti}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{totale dati mancanti: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{totale\PYZus{}dati\PYZus{}mancanti}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+righe con dati mancanti:
+   Feature1  Feature2  Feature3
+0       1.0       NaN       1.0
+1       2.0       2.0       NaN
+2       NaN       3.0       3.0
+4       5.0       NaN       5.0
+totale dati mancanti:  4
+    \end{Verbatim}
+
+    \begin{quote}
+Il codice stampa le righe del DataFrame df che contengono almeno un
+valore mancante (NaN o None), e poi stampa il numero totale di queste
+righe.
+\end{quote}
+
+    \subsubsection{Creazione e Visualizzazione di un DataFrame con Dati
+Mancanti}\label{creazione-e-visualizzazione-di-un-dataframe-con-dati-mancanti}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+
+\PY{c+c1}{\PYZsh{} Dataset con dati mancanti rappresentati da None o NaN}
+\PY{n}{dataset} \PY{o}{=} \PY{p}{[}
+    \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{nome}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Alice}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{età}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{25}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{punteggio}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{90}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{email}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{alice@email.com}\PY{l+s+s2}{\PYZdq{}}\PY{p}{\PYZcb{}}\PY{p}{,}
+    \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{nome}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Bob}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{età}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{22}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{punteggio}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{k+kc}{None}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{email}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{k+kc}{None}\PY{p}{\PYZcb{}}\PY{p}{,}
+    \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{nome}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Charlie}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{età}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{28}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{punteggio}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{75}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{email}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{charlie@email.com}\PY{l+s+s2}{\PYZdq{}}\PY{p}{\PYZcb{}}\PY{p}{,}
+\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Converti il dataset in un DataFrame}
+\PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{dataset}\PY{p}{)}
+\PY{n}{df}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+      nome  età  punteggio              email
+0    Alice   25       90.0    alice@email.com
+1      Bob   22        NaN               None
+2  Charlie   28       75.0  charlie@email.com
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{quote}
+Il codice fa quanto segue:
+
+Importa la libreria pandas con l'alias pd.
+
+Crea un dataset, che è una lista di dizionari. Ogni dizionario
+rappresenta una riga di dati con quattro attributi: ``nome'', ``età'',
+``punteggio'' e ``email''. Alcuni valori sono None, che rappresenta dati
+mancanti.
+
+Converte il dataset in un DataFrame di pandas usando
+pd.DataFrame(dataset). Un DataFrame è una struttura dati bidimensionale,
+simile a una tabella, con righe e colonne.
+
+Infine, il DataFrame df viene stampato.
+\end{quote}
+
+\begin{quote}
+Quindi, il codice crea un DataFrame da un dataset e lo stampa.
+\end{quote}
+
+    \subsubsection{Rimozione delle Righe con Dati Mancanti dal
+DataFrame}\label{rimozione-delle-righe-con-dati-mancanti-dal-dataframe}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df1}\PY{o}{=}\PY{n}{df}\PY{o}{.}\PY{n}{dropna}\PY{p}{(}\PY{n}{inplace}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\PY{n}{df1}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+      nome  età  punteggio              email
+0    Alice   25       90.0    alice@email.com
+2  Charlie   28       75.0  charlie@email.com
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{quote}
+Il codice crea un nuovo DataFrame df1 rimuovendo tutte le righe con dati
+mancanti (None o NaN) dal DataFrame originale df. L'argomento
+inplace=False significa che la modifica non viene applicata al DataFrame
+originale df, ma viene restituito un nuovo DataFrame con le modifiche.
+Quindi, df1 sarà un DataFrame che non contiene righe con dati mancanti.
+\end{quote}
+
+    \subsubsection{Creazione e Visualizzazione di una Mappa Termica dei
+Valori
+Mancanti}\label{creazione-e-visualizzazione-di-una-mappa-termica-dei-valori-mancanti}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Crea una heatmap colorata}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}cbar serve per una barra di clore, False non lo voglio, Truese lo voglio}
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{missing\PYZus{}matrix}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{viridis}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{cbar}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,}\PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Matrice di Missing Values}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<function matplotlib.pyplot.show(close=None, block=None)>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_31_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{quote}
+Il codice fa quanto segue:
+
+Crea una nuova figura con dimensioni specificate (8x6).
+
+Utilizza la funzione heatmap della libreria seaborn (alias sns) per
+creare una mappa termica (heatmap) della matrice missing\_matrix. La
+mappa termica è colorata usando il colormap `viridis'. L'argomento
+cbar=True indica che vuoi visualizzare una barra di colore che mostra la
+scala dei colori utilizzati nella mappa termica. L'argomento alpha=0.8
+imposta l'opacità dei colori nella mappa termica.
+
+Imposta il titolo della mappa termica come `Matrice di Missing Values'.
+
+Infine, il comando plt.show (che dovrebbe essere plt.show()) viene
+utilizzato per visualizzare la figura.
+\end{quote}
+
+\begin{quote}
+Quindi, il codice crea e visualizza una mappa termica colorata della
+matrice missing\_matrix, che rappresenta i valori mancanti nel
+DataFrame.
+\end{quote}
+
+    \subsubsection{Creazione di DataFrame con Dati Specificati e DataFrame
+Vuoto}\label{creazione-di-dataframe-con-dati-specificati-e-dataframe-vuoto}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+
+\PY{c+c1}{\PYZsh{} Genera dati di esempio}
+\PY{n}{data} \PY{o}{=} \PY{p}{\PYZob{}}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Variable1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Variable2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{nan}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{nan}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Missing\PYZus{}Column}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{A}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{B}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{A}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{C}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{nan}\PY{p}{]}
+\PY{p}{\PYZcb{}}
+\PY{c+c1}{\PYZsh{} Crea un DataFrame}
+\PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{data}\PY{p}{)}
+\PY{n}{df1}\PY{o}{=}\PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{)}
+\PY{n}{df}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+   Variable1  Variable2 Missing\_Column
+0          1        1.0              A
+1          2        2.0              B
+2          3        NaN              A
+3          4        4.0              C
+4          5        NaN            NaN
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{quote}
+Il codice fa quanto segue:
+
+Importa le librerie necessarie: pandas (come pd), seaborn (come sns),
+numpy (come np) e matplotlib.pyplot (come plt).
+
+Crea un dizionario chiamato data con tre chiavi: `Variable1',
+`Variable2' e `Missing\_Column'. Ogni chiave ha come valore una lista di
+cinque elementi, alcuni dei quali sono np.nan, che rappresenta un valore
+mancante.
+
+Crea un DataFrame df da data utilizzando pd.DataFrame(data).
+
+Crea un altro DataFrame vuoto df1.
+
+Infine, stampa il DataFrame df.
+\end{quote}
+
+\begin{quote}
+Quindi, il codice crea due DataFrame, uno con i dati specificati e uno
+vuoto, e stampa il DataFrame con i dati.
+\end{quote}
+
+    \subsubsection{Selezione delle Colonne Numeriche dal
+DataFrame}\label{selezione-delle-colonne-numeriche-dal-dataframe}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{numeric\PYZus{}cols} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{select\PYZus{}dtypes}\PY{p}{(}\PY{n}{include}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{number}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\PY{n}{numeric\PYZus{}cols}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+   Variable1  Variable2
+0          1        1.0
+1          2        2.0
+2          3        NaN
+3          4        4.0
+4          5        NaN
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{quote}
+Il codice seleziona tutte le colonne nel DataFrame df che contengono
+dati numerici. Questo viene fatto utilizzando il metodo select\_dtypes
+con l'argomento include={[}`number'{]}. Il risultato è un nuovo
+DataFrame numeric\_cols che contiene solo le colonne con dati numerici
+dal DataFrame originale df.
+\end{quote}
+
+    \subsubsection{Selezione e Stampa dei Nomi delle Colonne Numeriche dal
+DataFrame}\label{selezione-e-stampa-dei-nomi-delle-colonne-numeriche-dal-dataframe}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{numeric\PYZus{}cols} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{select\PYZus{}dtypes}\PY{p}{(}\PY{n}{include}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{number}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\PY{n}{numeric\PYZus{}cols}\PY{o}{.}\PY{n}{columns}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Index(['Variable1', 'Variable2'], dtype='object')
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{quote}
+Il codice fa quanto segue:
+
+Seleziona tutte le colonne nel DataFrame df che contengono dati numerici
+utilizzando il metodo select\_dtypes con l'argomento
+include={[}`number'{]}. Il risultato è un nuovo DataFrame numeric\_cols
+che contiene solo le colonne con dati numerici dal DataFrame originale
+df.
+
+Infine, stampa i nomi delle colonne del DataFrame numeric\_cols
+utilizzando l'attributo columns.
+\end{quote}
+
+\begin{quote}
+Quindi, il codice seleziona le colonne numeriche dal DataFrame df e
+stampa i loro nomi.
+\end{quote}
+
+    \subsubsection{Sostituzione dei Valori Mancanti con la Media nelle
+Colonne Numeriche del
+DataFrame}\label{sostituzione-dei-valori-mancanti-con-la-media-nelle-colonne-numeriche-del-dataframe}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df1}\PY{p}{[}\PY{n}{numeric\PYZus{}cols}\PY{o}{.}\PY{n}{columns}\PY{p}{]} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{n}{numeric\PYZus{}cols}\PY{o}{.}\PY{n}{columns}\PY{p}{]}\PY{o}{.}\PY{n}{fillna}\PY{p}{(}\PY{n}{df}\PY{p}{[}\PY{n}{numeric\PYZus{}cols}\PY{o}{.}\PY{n}{columns}\PY{p}{]}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{n}{df1}
+
+\PY{c+c1}{\PYZsh{}crea colonne con stessi nomi (var1 e var2) = assegna valori delle colonne df originale(mean=media)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+   Variable1  Variable2
+0          1   1.000000
+1          2   2.000000
+2          3   2.333333
+3          4   4.000000
+4          5   2.333333
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{quote}
+Il codice fa quanto segue:
+
+Seleziona le colonne numeriche dal DataFrame originale df utilizzando
+numeric\_cols.columns.
+
+Utilizza il metodo fillna per riempire i valori mancanti (NaN) nelle
+colonne numeriche del DataFrame df con la media (mean) dei valori
+esistenti in ciascuna colonna.
+
+Assegna il risultato al DataFrame df1, creando colonne con gli stessi
+nomi delle colonne numeriche in df e assegnando i valori calcolati.
+
+Infine, stampa il DataFrame df1.
+\end{quote}
+
+\begin{quote}
+Quindi, il codice crea un nuovo DataFrame df1 che ha le stesse colonne
+numeriche del DataFrame df, ma senza valori mancanti. I valori mancanti
+sono sostituiti con la media dei valori esistenti per ciascuna colonna.
+\end{quote}
+
+    \subsubsection{Selezione e Stampa dei Nomi delle Colonne Categoriche dal
+DataFrame}\label{selezione-e-stampa-dei-nomi-delle-colonne-categoriche-dal-dataframe}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}trattamento dei missing values nelle variabili categoriche}
+\PY{n}{categorical\PYZus{}cols} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{select\PYZus{}dtypes}\PY{p}{(}\PY{n}{exclude}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{number}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)} \PY{c+c1}{\PYZsh{}esclude colonne numeriche e fa vedere solo categoriche}
+\PY{n}{categorical\PYZus{}cols}\PY{o}{.}\PY{n}{columns}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Index(['Missing\_Column'], dtype='object')
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{quote}
+Il codice fa quanto segue:
+
+Seleziona tutte le colonne nel DataFrame df che non contengono dati
+numerici utilizzando il metodo select\_dtypes con l'argomento
+exclude={[}`number'{]}. Questo restituisce un nuovo DataFrame
+categorical\_cols che contiene solo le colonne con dati categorici dal
+DataFrame originale df.
+
+Infine, stampa i nomi delle colonne del DataFrame categorical\_cols
+utilizzando l'attributo columns.
+\end{quote}
+
+\begin{quote}
+Quindi, il codice seleziona le colonne categoriche dal DataFrame df e
+stampa i loro nomi.
+\end{quote}
+
+    \subsubsection{Calcolo del Numero Totale di Valori Mancanti per Colonna
+nel
+DataFrame}\label{calcolo-del-numero-totale-di-valori-mancanti-per-colonna-nel-dataframe}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Variable1         0
+Variable2         2
+Missing\_Column    1
+dtype: int64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{quote}
+Il codice calcola il numero totale di valori mancanti (NaN) per ogni
+colonna nel DataFrame df. Questo viene fatto utilizzando il metodo
+isnull() per identificare i valori mancanti, seguito dal metodo sum()
+per sommare il numero di valori mancanti per ogni colonna. Il risultato
+sarà una serie in cui l'indice è il nome della colonna e il valore è il
+numero totale di valori mancanti in quella colonna.
+\end{quote}
+
+    \subsubsection{Calcolo della Percentuale di Valori Mancanti per Colonna
+nel
+DataFrame}\label{calcolo-della-percentuale-di-valori-mancanti-per-colonna-nel-dataframe}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{missing\PYZus{}percent} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)} \PY{o}{/} \PY{n+nb}{len}\PY{p}{(}\PY{n}{df}\PY{p}{)} \PY{o}{*} \PY{l+m+mi}{100}
+\PY{n}{missing\PYZus{}percent}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Variable1          0.0
+Variable2         40.0
+Missing\_Column    20.0
+dtype: float64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{quote}
+Il codice calcola la percentuale di valori mancanti (NaN) per ogni
+colonna nel DataFrame df. Questo viene fatto utilizzando il metodo
+isnull().sum() per ottenere il numero totale di valori mancanti per ogni
+colonna, dividendo per la lunghezza del DataFrame len(df) per ottenere
+la proporzione, e moltiplicando per 100 per convertire in percentuale.
+Il risultato sarà una serie in cui l'indice è il nome della colonna e il
+valore è la percentuale di valori mancanti in quella colonna.
+\end{quote}
+
+    \subsubsection{Percentuale di missing
+values}\label{percentuale-di-missing-values}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Calcola la percentuale di righe con missing values per ciascuna variabile}
+\PY{n}{missing\PYZus{}percent}\PY{o}{=} \PY{p}{(}\PY{n}{df}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{p}{)} \PY{o}{/} \PY{n+nb}{len}\PY{p}{(}\PY{n}{df}\PY{p}{)} \PY{o}{*} \PY{l+m+mi}{100}
+
+\PY{c+c1}{\PYZsh{}crea il grafico a barre}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{missing\PYZus{}percent}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{kind}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{bar}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{skyblue}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Variabile}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{5 di missing values}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{analisi del missing values per variabile}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xticks}\PY{p}{(}\PY{n}{rotation}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_55_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{quote}
+Il codice fa quanto segue:
+
+Calcola la percentuale di righe con valori mancanti (NaN) per ogni
+colonna nel DataFrame df. Questo viene fatto utilizzando il metodo
+isnull().sum() per ottenere il numero totale di valori mancanti per ogni
+colonna, dividendo per la lunghezza del DataFrame len(df) per ottenere
+la proporzione, e moltiplicando per 100 per convertire in percentuale.
+Il risultato è una serie in cui l'indice è il nome della colonna e il
+valore è la percentuale di valori mancanti in quella colonna.
+
+Crea una nuova figura con dimensioni specificate (10x6).
+
+Crea un grafico a barre della serie missing\_percent utilizzando il
+metodo plot con l'argomento kind=`bar'. Le barre sono colorate in
+`skyblue' con un'opacità di 0.8.
+
+Imposta le etichette degli assi x e y e il titolo del grafico.
+
+Imposta la rotazione delle etichette dell'asse x a 0 gradi.
+
+Infine, il comando plt.show() viene utilizzato per visualizzare la
+figura.
+\end{quote}
+
+\begin{quote}
+Quindi, il codice calcola la percentuale di valori mancanti per ogni
+colonna nel DataFrame df e crea un grafico a barre per visualizzare
+queste percentuali.
+\end{quote}
+
+    \subsubsection{Analisi Esplorativa dei Dati Iniziale del
+DataFrame}\label{analisi-esplorativa-dei-dati-iniziale-del-dataframe}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}informazioni sul dataset }
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{df}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{}statistiche desrittive}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{df}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 5 entries, 0 to 4
+Data columns (total 3 columns):
+ \#   Column          Non-Null Count  Dtype
+---  ------          --------------  -----
+ 0   Variable1       5 non-null      int64
+ 1   Variable2       3 non-null      float64
+ 2   Missing\_Column  4 non-null      object
+dtypes: float64(1), int64(1), object(1)
+memory usage: 252.0+ bytes
+None
+       Variable1  Variable2
+count   5.000000   3.000000
+mean    3.000000   2.333333
+std     1.581139   1.527525
+min     1.000000   1.000000
+25\%     2.000000   1.500000
+50\%     3.000000   2.000000
+75\%     4.000000   3.000000
+max     5.000000   4.000000
+    \end{Verbatim}
+
+    \begin{quote}
+Il codice fa quanto segue:
+
+Utilizza il metodo info() sul DataFrame df per stampare informazioni sul
+DataFrame, come il numero di righe e colonne, i tipi di dati di ciascuna
+colonna, il numero di valori non nulli in ciascuna colonna e l'uso della
+memoria.
+
+Utilizza il metodo describe() sul DataFrame df per stampare statistiche
+descrittive per ciascuna colonna, come il conteggio, la media, la
+deviazione standard, il minimo, il 25° percentile (Q1), la mediana (50°
+percentile o Q2), il 75° percentile (Q3) e il massimo.
+\end{quote}
+
+\begin{quote}
+Quindi, il codice fornisce un'analisi esplorativa dei dati (EDA)
+iniziale del DataFrame df, stampando informazioni generali sul DataFrame
+e statistiche descrittive per ciascuna colonna.
+\end{quote}
+
+    \subsubsection{Visualizzazione della Posizione dei Valori Mancanti nel
+DataFrame tramite una Mappa
+Termica}\label{visualizzazione-della-posizione-dei-valori-mancanti-nel-dataframe-tramite-una-mappa-termica}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{df}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{viridis}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{cbar}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,}\PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{matrice di missing values}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_61_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{quote}
+Il codice crea una mappa termica (heatmap) che visualizza la posizione
+dei valori mancanti nel DataFrame df. Le celle colorate nella mappa
+termica rappresentano i valori mancanti. Questo è molto utile per avere
+una visione rapida di dove si trovano i dati mancanti nel tuo DataFrame.
+\end{quote}
+
+    \subsubsection{Generazione e Visualizzazione di un DataFrame di Dati
+Casuali}\label{generazione-e-visualizzazione-di-un-dataframe-di-dati-casuali}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
+\PY{k+kn}{import} \PY{n+nn}{plotly}\PY{n+nn}{.}\PY{n+nn}{express} \PY{k}{as} \PY{n+nn}{px}
+
+\PY{c+c1}{\PYZsh{} Genera dati casuali per l\PYZsq{}esplorazione}
+\PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{seed}\PY{p}{(}\PY{l+m+mi}{42}\PY{p}{)}
+\PY{n}{data} \PY{o}{=} \PY{p}{\PYZob{}}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Età}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{randint}\PY{p}{(}\PY{l+m+mi}{18}\PY{p}{,} \PY{l+m+mi}{70}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{l+m+mi}{1000}\PY{p}{)}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Genere}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{choice}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Maschio}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Femmina}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{l+m+mi}{1000}\PY{p}{)}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Punteggio}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{uniform}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{100}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{l+m+mi}{1000}\PY{p}{)}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Reddito}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{normal}\PY{p}{(}\PY{l+m+mi}{50000}\PY{p}{,} \PY{l+m+mi}{15000}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{l+m+mi}{1000}\PY{p}{)} \PY{c+c1}{\PYZsh{}distribuzione gaussiana}
+\PY{p}{\PYZcb{}}
+
+\PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{data}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Visualizza le prime righe del dataset}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{df}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+   Età   Genere  Punteggio       Reddito
+0   56  Maschio  85.120691  52915.764524
+1   69  Maschio  49.514653  44702.505608
+2   46  Maschio  48.058658  55077.257652
+3   32  Femmina  59.240778  45568.978848
+4   60  Maschio  82.468097  52526.914644
+    \end{Verbatim}
+
+    \begin{quote}
+Il codice fa quanto segue:
+
+Importa le librerie necessarie: pandas, numpy, matplotlib.pyplot,
+seaborn e plotly.express.
+
+Imposta un seed per il generatore di numeri casuali di numpy, in modo
+che i risultati siano riproducibili.
+
+Genera un dataset di 1000 righe con quattro variabili: `Età', `Genere',
+`Punteggio' e `Reddito'. I dati sono generati casualmente utilizzando
+diverse distribuzioni: uniforme, normale e una scelta casuale tra due
+opzioni.
+
+Crea un DataFrame pandas df da questo dataset.
+
+Infine, stampa le prime cinque righe del DataFrame utilizzando il metodo
+head().
+\end{quote}
+
+\begin{quote}
+Quindi, il codice genera un DataFrame di dati casuali e stampa le prime
+cinque righe.
+\end{quote}
+
+    \subsubsection{Calcolo e Stampa del Numero Totale di Valori Mancanti per
+Colonna nel
+DataFrame}\label{calcolo-e-stampa-del-numero-totale-di-valori-mancanti-per-colonna-nel-dataframe}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}gesione valori mancanti}
+\PY{n}{missing\PYZus{}data} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{valori mancanti per ciascuna colonna: }\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{missing\PYZus{}data}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+valori mancanti per ciascuna colonna:
+Età          0
+Genere       0
+Punteggio    0
+Reddito      0
+dtype: int64
+    \end{Verbatim}
+
+    \begin{quote}
+Il codice fa quanto segue:
+
+Utilizza il metodo isnull().sum() sul DataFrame df per calcolare il
+numero totale di valori mancanti (NaN) per ogni colonna. Il risultato è
+una serie in cui l'indice è il nome della colonna e il valore è il
+numero totale di valori mancanti in quella colonna.
+
+Infine, stampa la frase `valori mancanti per ciascuna colonna:' e la
+serie missing\_data.
+\end{quote}
+
+\begin{quote}
+Quindi, il codice calcola e stampa il numero totale di valori mancanti
+per ogni colonna nel DataFrame df.
+\end{quote}
+
+    \subsubsection{Creazione e Visualizzazione di un Istogramma della
+Distribuzione dei Valori
+Numerici}\label{creazione-e-visualizzazione-di-un-istogramma-della-distribuzione-dei-valori-numerici}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{23}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}visualizza la distribuzione dele varibaili numeriche}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{12}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{set\PYZus{}style}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{whitegrid}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{histplot}\PY{p}{(}\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Punteggio}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{kde}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{l+m+mi}{50}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Punteggio}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{c+c1}{\PYZsh{}istogramma}
+\PY{n}{plt}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{distribuzione delle variabili nuemriche}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_70_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{quote}
+Il codice fa quanto segue:
+
+Crea una nuova figura con dimensioni specificate (12x6).
+
+Imposta lo stile del grafico a `whitegrid' utilizzando sns.set\_style.
+
+Crea un istogramma della colonna `Punteggio' del DataFrame dfutilizzando
+sns.histplot. L'argomento kde=False indica che non vuoi visualizzare la
+curva di densità del kernel, e bins=50 indica che vuoi dividere i dati
+in 50 barre (o intervalli). L'argomento label=`Punteggio' fornisce
+un'etichetta per i dati.
+
+Visualizza la legenda del grafico con plt.legend().
+
+Imposta il titolo del grafico come `distribuzione delle variabili
+numeriche'.
+
+Infine, il comando plt.show() viene utilizzato per visualizzare la
+figura.
+\end{quote}
+
+\begin{quote}
+Quindi, il codice crea e visualizza un istogramma della distribuzione
+dei valori nella colonna `Punteggio' del DataFrame df.
+\end{quote}
+
+    \subsubsection{Creazione e Visualizzazione di un Box Plot della
+Distribuzione dei Punteggi per
+Genere}\label{creazione-e-visualizzazione-di-un-box-plot-della-distribuzione-dei-punteggi-per-genere}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{24}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}visualizza una box plot per una variabile numerica rispetto a un}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{boxplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Genere}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{y}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Punteggio}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{box plot tra genere e punteggio}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_73_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{quote}
+Il codice fa quanto segue:
+
+Crea una nuova figura con dimensioni specificate (10x6).
+
+Utilizza la funzione boxplot della libreria seaborn (alias sns) per
+creare un box plot della colonna `Punteggio' del DataFrame df,
+raggruppato per la colonna `Genere'. Questo grafico mostra la
+distribuzione dei punteggi per ciascun genere.
+
+Imposta il titolo del grafico come `box plot tra genere e punteggio'.
+
+Infine, il comando plt.show() viene utilizzato per visualizzare la
+figura.
+\end{quote}
+
+\begin{quote}
+Quindi, il codice crea e visualizza un box plot che mostra la
+distribuzione dei punteggi per ciascun genere nel DataFrame df.
+\end{quote}
+
+    \subsubsection{Creazione e Visualizzazione di un Grafico a Dispersione
+Interattivo con
+Plotly}\label{creazione-e-visualizzazione-di-un-grafico-a-dispersione-interattivo-con-plotly}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{25}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}visualizza un grafico a dispersione interattivo utilizzando platly}
+\PY{k+kn}{import} \PY{n+nn}{plotly}\PY{n+nn}{.}\PY{n+nn}{express} \PY{k}{as} \PY{n+nn}{px}
+\PY{n}{fig} \PY{o}{=} \PY{n}{px}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{df}\PY{p}{,} \PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Età}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Reddito}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Genere}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Punteggio}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{fig}\PY{o}{.}\PY{n}{update\PYZus{}layout}\PY{p}{(}\PY{n}{title}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Grafico a dispersione interattivo}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{fig}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    
+    
+    
+    \begin{quote}
+Il codice fa quanto segue:
+
+Importa la libreria plotly.express con l'alias px.
+
+Crea un grafico a dispersione interattivo utilizzando la funzione
+scatter di plotly.express. Le coordinate x e y del grafico sono
+rispettivamente le colonne `Età' e `Reddito' del DataFrame df. I punti
+sono colorati in base alla colonna `Genere' e la loro dimensione è
+determinata dalla colonna `Punteggio'.
+
+Aggiorna il layout del grafico per impostare il titolo come `Grafico a
+dispersione interattivo'.
+
+Infine, il comando fig.show() viene utilizzato per visualizzare il
+grafico.
+\end{quote}
+
+\begin{quote}
+Quindi, il codice crea e visualizza un grafico a dispersione interattivo
+che mostra la relazione tra `Età' e `Reddito', con i punti colorati in
+base al `Genere' e dimensionati in base al `Punteggio'.
+\end{quote}
+
+    \subsubsection{Generazione di un DataFrame di Dati Casuali con Valori
+Mancanti}\label{generazione-di-un-dataframe-di-dati-casuali-con-valori-mancanti}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{26}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+
+\PY{c+c1}{\PYZsh{} Impostare il seed per rendere i risultati riproducibili}
+\PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{seed}\PY{p}{(}\PY{l+m+mi}{41}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Creare un dataframe vuoto}
+\PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Generare dati casuali}
+\PY{n}{n\PYZus{}rows} \PY{o}{=} \PY{l+m+mi}{10000}
+\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{CatCol1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{choice}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{A}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{B}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{C}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{n}{n\PYZus{}rows}\PY{p}{)}
+\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{CatCol2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{choice}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{X}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{n}{n\PYZus{}rows}\PY{p}{)}
+\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{NumCol1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{randn}\PY{p}{(}\PY{n}{n\PYZus{}rows}\PY{p}{)}
+\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{NumCol2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{randint}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{100}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{n}{n\PYZus{}rows}\PY{p}{)}
+\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{NumCol3}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{uniform}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{n}{n\PYZus{}rows}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Calcolare il numero totale di missing values desiderati}
+\PY{n}{total\PYZus{}missing\PYZus{}values} \PY{o}{=} \PY{n+nb}{int}\PY{p}{(}\PY{l+m+mf}{0.03} \PY{o}{*} \PY{n}{n\PYZus{}rows} \PY{o}{*} \PY{n+nb}{len}\PY{p}{(}\PY{n}{df}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Introdurre missing values casuali}
+\PY{k}{for} \PY{n}{column} \PY{o+ow}{in} \PY{n}{df}\PY{o}{.}\PY{n}{columns}\PY{p}{:}
+    \PY{n}{num\PYZus{}missing\PYZus{}values} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{randint}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{total\PYZus{}missing\PYZus{}values} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}
+    \PY{n}{missing\PYZus{}indices} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{choice}\PY{p}{(}\PY{n}{n\PYZus{}rows}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{n}{num\PYZus{}missing\PYZus{}values}\PY{p}{,} \PY{n}{replace}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+    \PY{n}{df}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{missing\PYZus{}indices}\PY{p}{,} \PY{n}{column}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{nan}
+\PY{n}{df}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{26}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+     CatCol1 CatCol2   NumCol1  NumCol2   NumCol3
+0          A     NaN  0.440877     49.0  0.246007
+1          A       Y  1.945879     28.0  0.936825
+2          C       X  0.988834     42.0  0.751516
+3          A       Y -0.181978     73.0  0.950696
+4          B       X  2.080615     74.0  0.903045
+{\ldots}      {\ldots}     {\ldots}       {\ldots}      {\ldots}       {\ldots}
+9995       C       Y  1.352114     61.0  0.728445
+9996       C       Y  1.143642     67.0  0.605930
+9997       A       X -0.665794     54.0  0.071041
+9998       C       Y  0.004278      NaN       NaN
+9999       A       X  0.622473     95.0  0.751384
+
+[10000 rows x 5 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{quote}
+Il codice fa quanto segue:
+
+Importa le librerie pandas e numpy.
+
+Imposta un seed per il generatore di numeri casuali di numpy, in modo
+che i risultati siano riproducibili.
+
+Crea un DataFrame vuoto df.
+
+Genera dati casuali per cinque colonne nel DataFrame: `CatCol1',
+`CatCol2', `NumCol1', `NumCol2' e `NumCol3'. I dati sono generati
+utilizzando diverse distribuzioni: scelta casuale tra opzioni
+specificate, distribuzione normale, distribuzione uniforme discreta e
+distribuzione uniforme continua.
+
+Calcola il numero totale di valori mancanti desiderati come il 3\% del
+numero totale di valori nel DataFrame.
+
+Introduce valori mancanti (NaN) casuali nel DataFrame. Per ogni colonna,
+sceglie un numero casuale di righe e imposta il valore in quelle righe a
+NaN.
+
+Infine, stampa il DataFrame df.
+\end{quote}
+
+\begin{quote}
+Quindi, il codice genera un DataFrame di dati casuali e introduce valori
+mancanti casuali.
+\end{quote}
+
+    \subsubsection{Creazione e Visualizzazione di una Mappa Termica dei
+Valori Mancanti nel
+DataFrame}\label{creazione-e-visualizzazione-di-una-mappa-termica-dei-valori-mancanti-nel-dataframe}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{27}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{missing\PYZus{}matrix} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}crea una heatmap colorata}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{missing\PYZus{}matrix}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{viridis}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{cbar}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,}\PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Matrice di missing values}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_82_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{quote}
+Il codice fa quanto segue:
+
+Crea una matrice booleana missing\_matrix che indica la posizione dei
+valori mancanti (NaN) nel DataFrame df utilizzando il metodo isnull().
+
+Crea una nuova figura con dimensioni specificate (8x6).
+
+Utilizza la funzione heatmap della libreria seaborn (alias sns) per
+creare una mappa termica (heatmap) della matrice missing\_matrix. La
+mappa termica è colorata usando il colormap `viridis'. L'argomento
+cbar=False indica che non vuoi visualizzare una barra di colore che
+mostra la scala dei colori utilizzati nella mappa termica. L'argomento
+alpha=0.8 imposta l'opacità dei colori nella mappa termica.
+
+Imposta il titolo della mappa termica come `Matrice di missing values'.
+
+Infine, il comando plt.show() viene utilizzato per visualizzare la
+figura.
+\end{quote}
+
+\begin{quote}
+Quindi, il codice crea e visualizza una mappa termica dei valori
+mancanti nel DataFrame df.
+\end{quote}
+
+    \subsubsection{Generazione e Visualizzazione di un DataFrame di Dati
+Casuali}\label{generazione-e-visualizzazione-di-un-dataframe-di-dati-casuali}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{28}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
+
+\PY{c+c1}{\PYZsh{} Genera dati casuali per l\PYZsq{}esplorazione}
+\PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{seed}\PY{p}{(}\PY{l+m+mi}{42}\PY{p}{)}
+\PY{n}{data} \PY{o}{=} \PY{p}{\PYZob{}}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Data}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{pd}\PY{o}{.}\PY{n}{date\PYZus{}range}\PY{p}{(}\PY{n}{start}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{2023\PYZhy{}01\PYZhy{}01}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{end}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{2023\PYZhy{}12\PYZhy{}31}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{freq}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{D}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{c+c1}{\PYZsh{}data casuale}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Vendite}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{randint}\PY{p}{(}\PY{l+m+mi}{100}\PY{p}{,} \PY{l+m+mi}{1000}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{l+m+mi}{365}\PY{p}{)}\PY{p}{,} \PY{c+c1}{\PYZsh{}100 numeri casuali tra1 100 e 1000}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Prodotto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{choice}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{A}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{B}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{C}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{l+m+mi}{365}\PY{p}{)} \PY{c+c1}{\PYZsh{}}
+\PY{p}{\PYZcb{}}
+
+\PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{data}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Visualizza le prime righe del dataset}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{df}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+        Data  Vendite Prodotto
+0 2023-01-01      202        B
+1 2023-01-02      535        A
+2 2023-01-03      960        C
+3 2023-01-04      370        A
+4 2023-01-05      206        A
+    \end{Verbatim}
+
+    \begin{quote}
+Il tuo codice fa quanto segue:
+
+Importa le librerie necessarie: panda, numpy, matplotlib.pyplot e
+seaborn.
+
+Imposta un seed per il generatore di numeri casuali di numpy, in modo
+che i risultati siano riproducibili.
+
+Genera un dataset di 365 righe con tre variabili: `Data', `Vendite' e
+`Prodotto'. I dati sono generati utilizzando diverse funzioni:
+pd.date\_range genera una serie di date, np.random.randint genera numeri
+interi casuali e np.random.choice sceglie casualmente tra le opzioni
+specificate.
+
+Crea un DataFrame pandas df da questo dataset.
+
+Infine, stampa le prime cinque righe del DataFrame utilizzando il metodo
+head().
+\end{quote}
+
+\begin{quote}
+Quindi, il tuo codice genera un DataFrame di dati casuali e stampa le
+prime cinque righe.
+\end{quote}
+
+    \subsubsection{Creazione e Visualizzazione di un Grafico delle Vendite
+nel Tempo e un Box Plot delle Vendite per
+Prodotto}\label{creazione-e-visualizzazione-di-un-grafico-delle-vendite-nel-tempo-e-un-box-plot-delle-vendite-per-prodotto}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{29}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Visualizza un grafico delle vendite nel tempo}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{12}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{lineplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Data}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Vendite}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Andamento delle vendite nel tempo}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Data}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Vendite}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xticks}\PY{p}{(}\PY{n}{rotation}\PY{o}{=}\PY{l+m+mi}{45}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Visualizza una box plot delle vendite per prodotto}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{boxplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Prodotto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Vendite}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Box Plot delle vendite per prodotto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Prodotto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Vendite}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_88_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_88_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{quote}
+Il codice fa quanto segue:
+\end{quote}
+
+Crea un grafico delle vendite nel tempo:
+
+Crea una nuova figura con dimensioni specificate (12x6).
+
+Utilizza la funzione lineplot della libreria seaborn (alias sns) per
+creare un grafico delle vendite nel tempo. L'asse x rappresenta la data
+e l'asse y rappresenta le vendite.
+
+Imposta il titolo del grafico come `Andamento delle vendite nel tempo' e
+le etichette degli assi x e y come `Data' e `Vendite' rispettivamente.
+
+Ruota le etichette dell'asse x di 45 gradi per una migliore leggibilità.
+
+Infine, il comando plt.show() viene utilizzato per visualizzare il
+grafico.
+
+Crea un box plot delle vendite per prodotto:
+
+Crea una nuova figura con dimensioni specificate (10x6).
+
+Utilizza la funzione boxplot della libreria seaborn per creare un box
+plot delle vendite per prodotto. L'asse x rappresenta il prodotto e
+l'asse y rappresenta le vendite.
+
+Imposta il titolo del grafico come `Box Plot delle vendite per prodotto'
+e le etichette degli assi x e y come `Prodotto' e `Vendite'
+rispettivamente.
+
+Infine, il comando plt.show() viene utilizzato per visualizzare il
+grafico.
+
+\begin{verbatim}
+</ol>
+\end{verbatim}
+
+\begin{quote}
+Quindi, il codice crea e visualizza due grafici: un grafico delle
+vendite nel tempo e un box plot delle vendite per prodotto.
+\end{quote}
+
+    \subsubsection{Calcolo della Media Condizionata dell'Età per Livello di
+Soddisfazione e Creazione di un Grafico a
+Barre}\label{calcolo-della-media-condizionata-delletuxe0-per-livello-di-soddisfazione-e-creazione-di-un-grafico-a-barre}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{30}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
+
+\PY{c+c1}{\PYZsh{} Genera dati casuali per l\PYZsq{}esplorazione}
+\PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{seed}\PY{p}{(}\PY{l+m+mi}{42}\PY{p}{)}
+\PY{n}{data} \PY{o}{=} \PY{p}{\PYZob{}}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Età}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{randint}\PY{p}{(}\PY{l+m+mi}{18}\PY{p}{,} \PY{l+m+mi}{65}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{l+m+mi}{500}\PY{p}{)}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Soddisfazione}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{choice}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Molto Soddisfatto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Soddisfatto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Neutro}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Insoddisfatto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Molto Insoddisfatto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{l+m+mi}{500}\PY{p}{)}
+\PY{p}{\PYZcb{}}
+
+\PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{data}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{df}\PY{p}{)}
+\PY{n}{conditional\PYZus{}means} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Soddisfazione}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Età}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{transform}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{mean}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Numeric\PYZus{}Var}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{conditional\PYZus{}means}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{df}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Crea un grafico a barre per mostrare la media condizionata per ogni categoria}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{barplot}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{,} \PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Soddisfazione}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Numeric\PYZus{}Var}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{errorbar}\PY{o}{=}\PY{k+kc}{None}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Soddisfazione}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Media Condizionata di Numeric\PYZus{}Var}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Media Condizionata delle Variabili Numeriche per Categoria}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xticks}\PY{p}{(}\PY{n}{rotation}\PY{o}{=}\PY{l+m+mi}{90}\PY{p}{)}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+     Età        Soddisfazione
+0     56    Molto Soddisfatto
+1     46  Molto Insoddisfatto
+2     32               Neutro
+3     60               Neutro
+4     25  Molto Insoddisfatto
+..   {\ldots}                  {\ldots}
+495   37    Molto Soddisfatto
+496   41    Molto Soddisfatto
+497   29    Molto Soddisfatto
+498   52    Molto Soddisfatto
+499   50    Molto Soddisfatto
+
+[500 rows x 2 columns]
+     Età        Soddisfazione  Numeric\_Var
+0     56    Molto Soddisfatto    41.651376
+1     46  Molto Insoddisfatto    40.054054
+2     32               Neutro    41.747368
+3     60               Neutro    41.747368
+4     25  Molto Insoddisfatto    40.054054
+..   {\ldots}                  {\ldots}          {\ldots}
+495   37    Molto Soddisfatto    41.651376
+496   41    Molto Soddisfatto    41.651376
+497   29    Molto Soddisfatto    41.651376
+498   52    Molto Soddisfatto    41.651376
+499   50    Molto Soddisfatto    41.651376
+
+[500 rows x 3 columns]
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_91_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{quote}
+Il codice fa quanto segue:
+
+Importa le librerie necessarie: pandas, numpy, matplotlib.pyplot e
+seaborn.
+
+Imposta un seed per il generatore di numeri casuali di numpy, in modo
+che i risultati siano riproducibili.
+
+Genera un dataset di 500 righe con due variabili: `Età' e
+`Soddisfazione'.
+
+I dati sono generati utilizzando diverse funzioni: np.random.randint
+genera numeri interi casuali e np.random.choice sceglie casualmente tra
+le opzioni specificate.
+
+Crea un DataFrame pandas df da questo dataset e lo stampa.
+
+Calcola la media condizionata dell'età per ogni livello di soddisfazione
+utilizzando il metodo groupby e transform(`mean'). Questo crea una nuova
+serie conditional\_means che ha la stessa lunghezza del DataFrame df.
+
+Aggiunge la serie conditional\_means al DataFrame df come una nuova
+colonna `Numeric\_Var' e stampa il DataFrame aggiornato.
+
+Crea una nuova figura con dimensioni specificate (8x6).
+
+Utilizza la funzione barplot della libreria seaborn per creare un
+grafico a barre che mostra la media condizionata di `Numeric\_Var' per
+ogni livello di `Soddisfazione'.
+
+Imposta le etichette degli assi x e y e il titolo del grafico.
+
+Ruota le etichette dell'asse x di 90 gradi per una migliore leggibilità.
+
+Infine, il comando plt.show() viene utilizzato per visualizzare il
+grafico.
+\end{quote}
+
+\begin{quote}
+Quindi, il codice genera un DataFrame di dati casuali, calcola la media
+condizionata dell'età per ogni livello di soddisfazione, e crea e
+visualizza un grafico a barre che mostra queste medie condizionate.
+\end{quote}
+
+    \subsubsection{Calcolo e Visualizzazione di una Mappa Termica della
+Matrice di Correlazione per un DataFrame di Dati
+Casuali}\label{calcolo-e-visualizzazione-di-una-mappa-termica-della-matrice-di-correlazione-per-un-dataframe-di-dati-casuali}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{31}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}\PYZsh{} import numpy as np}
+\PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+
+\PY{c+c1}{\PYZsh{} Genera un dataset di esempio con variabili numeriche}
+\PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{seed}\PY{p}{(}\PY{l+m+mi}{42}\PY{p}{)}
+\PY{n}{data} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{rand}\PY{p}{(}\PY{l+m+mi}{100}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{)}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Var1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Var2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Var3}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Var4}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Var5}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Aggiungi alcune variabili categoriche generate casualmente}
+\PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Categoria1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{choice}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{A}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{B}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{C}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{l+m+mi}{100}\PY{p}{)}
+\PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Categoria2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{choice}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{X}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{l+m+mi}{100}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{}calcola la matrice di correlazione tra tutte le variabili numerici (correlazione = )}
+\PY{n}{correlation\PYZus{}matrix} \PY{o}{=} \PY{n}{data}\PY{o}{.}\PY{n}{corr}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{}visualizza la matrice di correlazione come heatmap}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{correlation\PYZus{}matrix}\PY{p}{,} \PY{n}{annot}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{coolwarm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fmt}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{.2f}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.7}\PY{p}{)}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Matrice di correlazione}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}joele\textbackslash{}AppData\textbackslash{}Local\textbackslash{}Temp\textbackslash{}ipykernel\_21328\textbackslash{}1612240019.py:14:
+FutureWarning:
+
+The default value of numeric\_only in DataFrame.corr is deprecated. In a future
+version, it will default to False. Select only valid columns or specify the
+value of numeric\_only to silence this warning.
+
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_94_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{quote}
+Il codice fa quanto segue:
+
+Importa le librerie necessarie: numpy, seaborn, matplotlib.pyplot e
+pandas.
+
+Imposta un seed per il generatore di numeri casuali di numpy, in modo
+che i risultati siano riproducibili.
+
+Genera un DataFrame data di 100 righe con cinque variabili numeriche:
+`Var1', `Var2', `Var3', `Var4' e `Var5'. I dati sono generati
+utilizzando una distribuzione uniforme continua tra 0 e 1.
+
+Aggiunge due variabili categoriche al DataFrame: `Categoria1' e
+`Categoria2'. I dati sono generati scegliendo casualmente tra le opzioni
+specificate.
+
+Calcola la matrice di correlazione tra tutte le variabili numeriche
+utilizzando il metodo corr(). Questo restituisce un nuovo DataFrame
+correlation\_matrix in cui l'indice e le colonne sono i nomi delle
+variabili numeriche e ogni cella contiene il coefficiente di
+correlazione tra due variabili.
+
+Crea una nuova figura con dimensioni specificate (10x8).
+
+Utilizza la funzione heatmap della libreria seaborn per creare una mappa
+termica (heatmap) della matrice di correlazione. La mappa termica è
+colorata usando il colormap `coolwarm', e ogni cella è annotata con il
+coefficiente di correlazione corrispondente, formattato come un numero
+decimale con due cifre decimali.
+
+Imposta il titolo della mappa termica come `Matrice di correlazione'.
+
+Infine, il comando plt.show() viene utilizzato per visualizzare la
+figura.
+\end{quote}
+
+\begin{quote}
+Quindi, il codice genera un DataFrame di dati casuali, calcola la
+matrice di correlazione tra le variabili numeriche e crea e visualizza
+una mappa termica di questa matrice di correlazione.
+\end{quote}
+
+    \subsubsection{Identificazione e Conteggio delle Righe con Dati Mancanti
+nel
+DataFrame}\label{identificazione-e-conteggio-delle-righe-con-dati-mancanti-nel-dataframe}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{32}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}identificazione delle righe con dati mancati}
+\PY{n}{righe\PYZus{}con\PYZus{}dati\PYZus{}mancanti} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{n}{df}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{any}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{]}
+\PY{n+nb}{len}\PY{p}{(}\PY{n}{righe\PYZus{}con\PYZus{}dati\PYZus{}mancanti}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{32}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+0
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{quote}
+Il codice fa quanto segue:
+
+Utilizza il metodo isnull().any(axis=1) sul DataFrame df per creare una
+serie booleana che indica se c'è un valore mancante (NaN) in qualsiasi
+colonna di ciascuna riga.
+
+Seleziona le righe del DataFrame df che hanno almeno un valore mancante,
+utilizzando la serie booleana come indice. Questo restituisce un nuovo
+DataFrame righe\_con\_dati\_mancanti che contiene solo le righe con
+valori mancanti.
+
+Infine, calcola e stampa il numero di righe nel DataFrame
+righe\_con\_dati\_mancanti utilizzando la funzione len().
+\end{quote}
+
+\begin{quote}
+Quindi, il codice identifica le righe con dati mancanti nel DataFrame df
+e stampa il loro numero.
+\end{quote}
+
+    \subsubsection{Percentuale di valori mancanti per
+colonna}\label{percentuale-di-valori-mancanti-per-colonna}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{33}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{missing\PYZus{}percent} \PY{o}{=} \PY{p}{(}\PY{n}{df}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)} \PY{o}{/} \PY{n+nb}{len}\PY{p}{(}\PY{n}{df}\PY{p}{)} \PY{o}{*} \PY{l+m+mi}{100}\PY{p}{)}
+\PY{n}{missing\PYZus{}percent}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{33}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Età              0.0
+Soddisfazione    0.0
+Numeric\_Var      0.0
+dtype: float64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{quote}
+Questo codice calcola la percentuale di valori mancanti in ciascuna
+colonna del DataFrame df:
+
+df.isnull() restituisce un DataFrame dello stesso formato di df, ma con
+valori True dove i valori originali erano mancanti (NaN) e False dove i
+valori erano presenti.
+
+.sum() somma i valori True (considerati come 1) in ciascuna colonna,
+restituendo il numero totale di valori mancanti per colonna.
+
+Dividendo per len(df) si ottiene la proporzione di valori mancanti per
+colonna, poiché len(df) restituisce il numero totale di righe nel
+DataFrame.
+
+Moltiplicando per 100, si converte la proporzione in percentuale.
+\end{quote}
+
+\begin{quote}
+Il risultato, missing\_percent, è una serie pandas in cui l'indice è
+l'elenco delle colonne di df e i valori sono le percentuali di valori
+mancanti per ciascuna colonna.
+\end{quote}
+
+    \subsubsection{Visualizzazione dei Valori Mancanti con
+Heatmap}\label{visualizzazione-dei-valori-mancanti-con-heatmap}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{34}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{missing\PYZus{}matrix} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}crea una heatmap colorata}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{missing\PYZus{}matrix}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{viridis}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{cbar}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,}\PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Matrice di missing values}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_103_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{quote}
+Il codice fa quanto segue:
+
+Crea una matrice di valori mancanti: Il comando missing\_matrix =
+df.isnull() crea una nuova matrice chiamata missing\_matrix. Questa
+matrice ha la stessa forma del DataFrame originale df, ma contiene
+valori True dove i valori originali erano mancanti (NaN) e False dove i
+valori erano presenti.
+\end{quote}
+
+Crea una heatmap dei valori mancanti: Il comando
+plt.figure(figsize=(8,6)) crea una nuova figura con dimensioni
+specificate (8x6). Il comando sns.heatmap(missing\_matrix,
+cmap=`viridis', cbar=False,alpha=0.8) utilizza la funzione heatmap della
+libreria seaborn (alias sns) per creare una heatmap dei valori mancanti.
+L'asse x rappresenta le colonne del DataFrame e l'asse y rappresenta le
+righe. I valori mancanti sono rappresentati con un colore e i valori non
+mancanti con un altro colore. Il comando plt.title(`Matrice di missing
+values') imposta il titolo della heatmap come `Matrice di missing
+values'. Infine, il comando plt.show() viene utilizzato per visualizzare
+la heatmap.
+
+\begin{quote}
+Quindi, il codice crea e visualizza una heatmap dei valori mancanti nel
+DataFrame df. Questo può essere molto utile per capire dove si
+concentrano i dati mancanti.
+\end{quote}
+
+    \subsection{IMPORT DATA}\label{import-data}
+
+    \subsubsection{Caricamento e Visualizzazione dei Dati da un Foglio di
+Lavoro Excel in
+Python}\label{caricamento-e-visualizzazione-dei-dati-da-un-foglio-di-lavoro-excel-in-python}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{35}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+
+\PY{n}{percorso\PYZus{}file\PYZus{}excel} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{C:}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s+s2}{Users}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s+s2}{joele}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s+s2}{OneDrive}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s+s2}{Desktop}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s+s2}{dati robotica}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s+s2}{serieA.xlsx}\PY{l+s+s2}{\PYZdq{}}
+\PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}excel}\PY{p}{(}\PY{n}{percorso\PYZus{}file\PYZus{}excel} \PY{p}{,} \PY{n}{sheet\PYZus{}name}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{10\PYZhy{}11}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{df}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{35}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+    position                   team  Pt  Played  Won  Net  lose  Goals made  \textbackslash{}
+0          1            Milan Milan  82      38   24   10     4          65
+1          2            Inter Inter  76      38   23    7     8          69
+2          3          Napoli Napoli  70      38   21    7    10          59
+3          4        Udinese Udinese  66      38   20    6    12          65
+4          5            Lazio Lazio  66      38   20    6    12          55
+5          6              Roma Roma  63      38   18    9    11          59
+6          7      Juventus Juventus  58      38   15   13    10          57
+7          8        Palermo Palermo  56      38   17    5    16          58
+8          9  Fiorentina Fiorentina  51      38   12   15    11          49
+9         10            Genoa Genoa  51      38   14    9    15          45
+10        11          Chievo Chievo  46      38   11   13    14          38
+11        12            Parma Parma  46      38   11   13    14          39
+12        13        Catania Catania  46      38   12   10    16          40
+13        14      Cagliari Cagliari  45      38   12    9    17          44
+14        15          Cesena Cesena  43      38   11   10    17          38
+15        16   Bologna Bologna (-3)  42      38   11   12    15          35
+16        17            Lecce Lecce  41      38   11    8    19          46
+17        18    Sampdoria Sampdoria  36      38    8   12    18          33
+18        19        Brescia Brescia  32      38    7   11    20          34
+19        20              Bari Bari  24      38    5    9    24          27
+
+    Goals suffered  Difference goals
+0               24                41
+1               42                27
+2               39                20
+3               43                22
+4               39                16
+5               52                 7
+6               47                10
+7               63                -5
+8               44                 5
+9               47                -2
+10              40                -2
+11              47                -8
+12              52               -12
+13              51                -7
+14              50               -12
+15              52               -17
+16              66               -20
+17              49               -16
+18              52               -18
+19              56               -29
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{quote}
+il codice sta facendo quanto segue:
+
+Importa la libreria pandas: La prima riga del codice importa la libreria
+pandas e la rinomina come pd. Pandas è una libreria di Python che
+fornisce strutture dati e funzionalità per manipolare e analizzare i
+dati.
+
+Specifica il percorso del file Excel: La variabile percorso\_file\_excel
+viene impostata con il percorso del file Excel che desideri leggere. In
+questo caso, il file si trova nella cartella `dati robotica' sul tuo
+desktop.
+
+Legge il file Excel: La funzione pd.read\_excel() viene utilizzata per
+leggere il file Excel specificato. Il parametro sheet\_name=`10-11'
+indica che desideri leggere il foglio di lavoro chiamato `10-11' nel
+file Excel.
+
+Visualizza il DataFrame: L'ultima riga del codice, df, stampa il
+contenuto del DataFrame df. Un DataFrame è una struttura dati
+bidimensionale, simile a una tabella, che può contenere dati di vari
+tipi (numerici, stringhe, booleani, ecc.) e consente operazioni di
+manipolazione dei dati come quelle in SQL e Excel.
+\end{quote}
+
+\begin{quote}
+In sintesi, il codice legge un foglio di lavoro specifico da un file
+Excel e lo carica in un DataFrame di pandas, che viene poi visualizzato.
+\end{quote}
+
+    \subsubsection{Caricamento e Visualizzazione dei Dati da un File CSV in
+Python}\label{caricamento-e-visualizzazione-dei-dati-da-un-file-csv-in-python}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{36}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
+\PY{n}{percorso\PYZus{}file\PYZus{}csv} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{C:}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s+s2}{Users}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s+s2}{joele}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s+s2}{OneDrive}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s+s2}{Desktop}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s+s2}{dati robotica}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s+s2}{pokemons.csv}\PY{l+s+s2}{\PYZdq{}}
+\PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{n}{percorso\PYZus{}file\PYZus{}csv}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{df}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+   id        name      rank    generation evolves\_from  type1   type2  hp  \textbackslash{}
+0   1   bulbasaur  ordinary  generation-i      nothing  grass  poison  45
+1   2     ivysaur  ordinary  generation-i    bulbasaur  grass  poison  60
+2   3    venusaur  ordinary  generation-i      ivysaur  grass  poison  80
+3   4  charmander  ordinary  generation-i      nothing   fire    None  39
+4   5  charmeleon  ordinary  generation-i   charmander   fire    None  58
+
+   atk  def  spatk  spdef  speed  total  height  weight  \textbackslash{}
+0   49   49     65     65     45    318       7      69
+1   62   63     80     80     60    405      10     130
+2   82   83    100    100     80    525      20    1000
+3   52   43     60     50     65    309       6      85
+4   64   58     80     65     80    405      11     190
+
+               abilities                                               desc
+0  overgrow chlorophyll   A strange seed was planted on its back at birt{\ldots}
+1  overgrow chlorophyll   When the bulb on its back grows large, it appe{\ldots}
+2  overgrow chlorophyll   The plant blooms when it is absorbing solar en{\ldots}
+3     blaze solar-power   Obviously prefers hot places. When it rains, s{\ldots}
+4     blaze solar-power   When it swings its burning tail, it elevates t{\ldots}
+    \end{Verbatim}
+
+    \begin{quote}
+il codice fa quanto segue:
+
+Importa le librerie necessarie: Le prime righe del codice importano le
+librerie necessarie: pandas (rinominata come pd), numpy (rinominata come
+np), matplotlib.pyplot (rinominata come plt) e seaborn (rinominata come
+sns). Queste librerie forniscono funzionalità per manipolare e
+analizzare i dati, così come per la visualizzazione dei dati.
+
+Specifica il percorso del file CSV: La variabile percorso\_file\_csv
+viene impostata con il percorso del file CSV che desideri leggere. In
+questo caso, il file si trova nella cartella `dati robotica' sul tuo
+desktop.
+
+Legge il file CSV: La funzione pd.read\_csv() viene utilizzata per
+leggere il file CSV specificato. Questa funzione legge il file CSV e lo
+converte in un DataFrame di pandas.
+
+Visualizza il DataFrame: L'ultima riga del codice, print(df.head()),
+stampa le prime 5 righe del DataFrame df. Un DataFrame è una struttura
+dati bidimensionale, simile a una tabella, che può contenere dati di
+vari tipi (numerici, stringhe, booleani, ecc.) e consente operazioni di
+manipolazione dei dati.
+\end{quote}
+
+\begin{quote}
+In sintesi, il codice legge un file CSV specifico e lo carica in un
+DataFrame di pandas, che viene poi visualizzato stampando le prime 5
+righe.
+\end{quote}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
